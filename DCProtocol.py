@@ -15,59 +15,44 @@ class DCSProtocol(object):
     DCSProtocol is a two-sided (server-clients) protocol to be used in DCClient and DCServer.
     DCSProtocol is working as a translator to "Socket's Language" for DCClient and DCServer.
     """
-    def __init__(self, func, calc_area):
+    def __init__(self, map_func, parameters, node):
         """
-        :param func: function object
-        :param calc_area: any iterable item that represents a range of numbers
+        :param map_func: function object
+        :param parameters: any iterable item that represents a range of numbers
         """
-        self.func = marshal.dumps(func.func_code)
-        self.calc_area = SEP.join(calc_area)
-        self.result = DEFAULT_RESULT
-        self.is_successful = False
+        self.map_func = map_func
+        self.parameters = parameters
+        self.node = node
 
-    def send_task(self, worker):
+    def send_map_func(self):
         """
-        :param worker: a ready to write to client reference
+        Sends map function to a node via protocol
         """
-        worker.send(self.func)
-        worker.send(self.calc_area)
+        self.node.send(marshal.dumps(self.map_func.func_code))
+        self.node.send(marshal.dumps(self.parameters))
 
-    def recv_result(self, worker):
-        """
-        :param worker: a ready to receive from client reference
-        """
-        self.is_successful = worker.recv(HKB)
-        if self.is_successful == TRUE:
-            self.result = worker.recv(HKB)
-            return self.result
+    def get_result(self):
+        is_successful = marshal.loads(self.node.recv(HKB))
+        if is_successful:
+            result = marshal.loads(self.node.recv(HKB))
+            return result
 
 
-class DCCProtocol(object):
+class DCNProtocol(object):
     """
     DCCProtocol is a two-sided (server-clients) protocol to be used in DCClient and DCServer.
     DCCProtocol is working as a translator to "Socket's Language" for DCClient and DCServer.
     """
-    def __init__(self, is_successful, result=DEFAULT_RESULT):
-        """
-        :param is_successful: a boolean value - True if calc was successful
-        :param result: any type of object that is an answer to the manager task. (Except Function or Classes)
-        """
-        self.is_successful = str(is_successful)
-        self.result = marshal.dumps(result)
-        self.task = DEFAULT_RESULT
-        self.calc_area = DEFAULT_RESULT
+    def __init__(self, manager):
+        self.server = manager
+        self.map_func = types.FunctionType(marshal.loads(manager.recv(HKB)), {})
+        self.parameters = marshal.loads(manager.recv(HKB))
 
-    def send_result(self, manager):
+    def send_result(self, is_successful, result=None):
         """
-        :param manager: a ready to write to manager server reference
+        :param result: results from task preformed by client
+        :param is_successful: True if task was successful
         """
-        manager.send(self.is_successful)
-        if self.result != DEFAULT_RESULT:
-            manager.send()
-
-    def recv_task(self, manager):
-        """
-        :param manager: a ready to write to manager server reference
-        """
-        self.task = types.FunctionType(marshal.loads(manager.recv(HKB)), {})
-        self.calc_area = manager.recv(HKB).split(SEP)
+        self.server.send(is_successful)
+        if result:
+            self.server.send(marshal.dumps(result))

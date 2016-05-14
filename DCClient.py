@@ -30,3 +30,9 @@ class DCNode(object):
         except Exception:
             self.protocol.send_result(False)
             return None
+
+if __name__ == "__main__":
+    my_socket = socket.socket()
+    my_socket.connect(('192.168.1.84', 23))
+    node = DCNode(my_socket)
+    node.work()

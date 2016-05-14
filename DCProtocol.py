@@ -32,10 +32,15 @@ class DCSProtocol(object):
         self.node.send(marshal.dumps(self.parameters))
 
     def get_result(self):
+        """
+        gets results from connected node via protocol
+        :return result: results from node, if unsuccessful signal received - returns None
+        """
         is_successful = marshal.loads(self.node.recv(HKB))
         if is_successful:
             result = marshal.loads(self.node.recv(HKB))
             return result
+        return None
 
 
 class DCNProtocol(object):
@@ -53,6 +58,6 @@ class DCNProtocol(object):
         :param result: results from task preformed by client
         :param is_successful: True if task was successful
         """
-        self.server.send(is_successful)
+        self.server.send(marshal.dumps(is_successful))
         if result:
             self.server.send(marshal.dumps(result))

@@ -6,11 +6,12 @@ SEP = ','
 DEFAULT_RESULT = ''
 HKB = 512
 TRUE = 'True'
+EMPTY = ""
 
 __author__ = 'Gilad Barak'
 
 
-class DCSProtocol(object):
+class DCMProtocol(object):
     """
     DCSProtocol is a two-sided (server-clients) protocol to be used in DCClient and DCServer.
     DCSProtocol is working as a translator to "Socket's Language" for DCClient and DCServer.
@@ -50,8 +51,10 @@ class DCNProtocol(object):
     """
     def __init__(self, manager):
         self.server = manager
-        self.map_func = types.FunctionType(marshal.loads(manager.recv(HKB)), {})
-        self.parameters = marshal.loads(manager.recv(HKB))
+        self.raw_func = manager.recv(HKB)
+        if not self.is_server_down():
+            self.map_func = types.FunctionType(marshal.loads(self.raw_func), {})
+            self.parameters = marshal.loads(manager.recv(HKB))
 
     def send_result(self, is_successful, result=None):
         """
@@ -61,3 +64,12 @@ class DCNProtocol(object):
         self.server.send(marshal.dumps(is_successful))
         if result:
             self.server.send(marshal.dumps(result))
+
+    def is_server_down(self):
+        """
+        When server goes down, it automatically sends an empty message to all clients
+        function checks if such message was sent.
+        """
+        if self.raw_func == EMPTY:
+            return True
+        return False

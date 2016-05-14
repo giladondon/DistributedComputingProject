@@ -22,11 +22,16 @@ class DCNode(object):
         Sends back to server results of function. If unsuccessful sends appropriate signal
         :return result: result of function, if unsuccessful returns None
         """
+        if self.protocol.is_server_down():
+            return None
+
         map_function = self.protocol.map_func
+
         try:
             result = map_function(self.protocol.parameters)
             self.protocol.send_result(True, result=result)
             return result
+
         except Exception:
             self.protocol.send_result(False)
             return None

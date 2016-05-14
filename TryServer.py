@@ -12,7 +12,7 @@ def calc(x):
 
 def main():
     server_socket = socket.socket()
-    server_socket.bind(('0.0.0.0', 23))
+    server_socket.bind(('0.0.0.0', 9421))
     server_socket.listen(1)
     (client_socket, client_address) = server_socket.accept()
     proto = DCMProtocol(calc, 10, client_socket)

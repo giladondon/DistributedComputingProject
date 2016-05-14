@@ -14,7 +14,7 @@ class DCNode(object):
         :param node_socket: a socket object connected to server side on other end
         """
         self.own_socket = node_socket
-        self.protocol = DCNProtocol(self.own_socket)
+        self.connector = DCNProtocol(self.own_socket)
 
     def work(self):
         """
@@ -22,18 +22,18 @@ class DCNode(object):
         Sends back to server results of function. If unsuccessful sends appropriate signal
         :return result: result of function, if unsuccessful returns None
         """
-        if self.protocol.is_server_down():
+        if self.connector.is_server_down():
             return None
 
-        map_function = self.protocol.map_func
+        map_function = self.connector.map_func
 
         try:
-            result = map_function(self.protocol.parameters)
-            self.protocol.send_result(True, result=result)
+            result = map_function(self.connector.parameters)
+            self.connector.send_result(True, result=result)
             return result
 
         except Exception:
-            self.protocol.send_result(False)
+            self.connector.send_result(False)
             return None
 
 if __name__ == "__main__":

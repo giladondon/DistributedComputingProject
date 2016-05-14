@@ -3,7 +3,7 @@ from DCNode import *
 __author__ = 'Gilad Barak'
 
 IP_MANAGER = '192.168.1.84'
-DCPORT = 23
+DCPORT = 9421
 
 
 def reconnect():

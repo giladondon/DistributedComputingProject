@@ -2,10 +2,7 @@ import marshal
 import types
 import socket
 
-SEP = ','
-DEFAULT_RESULT = ''
 HKB = 512
-TRUE = 'True'
 EMPTY = ""
 
 __author__ = 'Gilad Barak'
@@ -20,6 +17,7 @@ class DCMProtocol(object):
         """
         :param map_func: function object
         :param parameters: any iterable item that represents a range of numbers
+        :param node: socket to node worker
         """
         self.map_func = map_func
         self.parameters = parameters

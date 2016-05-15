@@ -30,6 +30,7 @@ def main():
     while True:
         this_node = DCNode(manager_socket)
         results = this_node.work()
+        print "results from node: " + str(results)
         if not results:
             manager_socket = reconnect()
 

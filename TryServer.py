@@ -7,7 +7,7 @@ __author__ = 'Gilad Barak'
 
 
 def calc(x):
-    return x*x
+    return len(x)
 
 
 def main():
@@ -15,11 +15,11 @@ def main():
     server_socket.bind(('0.0.0.0', 9421))
     server_socket.listen(1)
     (client_socket, client_address) = server_socket.accept()
-    proto = DCMProtocol(calc, 10, client_socket)
+    proto = DCMProtocol(calc, [1, 2, 3, 4, 5], client_socket)
     proto.send_map_func()
     a = proto.get_result()
     print a
-    proto = DCMProtocol(calc, 20, client_socket)
+    proto = DCMProtocol(calc, [1, 2, 3, 4, 5, 6], client_socket)
     proto.send_map_func()
     a = proto.get_result()
     print a

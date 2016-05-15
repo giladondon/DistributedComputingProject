@@ -51,8 +51,10 @@ class DCNProtocol(object):
         self.server = manager
         self.raw_func = manager.recv(HKB)
         if not self.is_server_down():
-            self.map_func = types.FunctionType(marshal.loads(self.raw_func), {})
+            self.map_func = types.FunctionType(marshal.loads(self.raw_func), globals())
             self.parameters = marshal.loads(manager.recv(HKB))
+
+            print "Parameters from DCNProtocol: " + str(self.parameters)
 
     def send_result(self, is_successful, result=None):
         """

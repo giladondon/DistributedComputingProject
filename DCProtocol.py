@@ -38,8 +38,12 @@ class DCMProtocol(object):
         is_successful = marshal.loads(self.node.recv(HKB))
         if is_successful:
             result = marshal.loads(self.node.recv(HKB))
+            print str(result)
             return result
         return None
+
+    def info(self):
+        print "Parameters: " + str(self.parameters)
 
 
 class DCNProtocol(object):

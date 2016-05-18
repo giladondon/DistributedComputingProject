@@ -1,6 +1,7 @@
 from DCProtocol import *
 from random import sample
 import select
+import time
 
 __author__ = 'Gilad Barak'
 
@@ -36,7 +37,6 @@ class DCManager(object):
         for node in nodes:
             dict_nodes[node] = DCMProtocol(self.map_func, [], node)
 
-        print str(dict_nodes)
         return dict_nodes
 
     def assign_lil_missions(self):
@@ -80,24 +80,40 @@ class DCManager(object):
         """
         self.assign_lil_missions()
 
+        for node in self.working_nodes.keys():
+            self.working_nodes[node].info()
+
+        # Up to here works.
+
         self.send_lil_missions()
 
         self.get_responses()
 
+        print "PRN 2: " + str(self.response_stock)
+
         self.reduce_nodes_answers()
 
 
+def reduce_for_summing(numbers):
+    bank = 0
+    for answer in numbers:
+        print "TYPE: " + str(type(answer))
+        bank += answer
 
-def reduce_for_summing(x):
-    pass
+    return bank
 
 
-def mapp(x):
-    return x*x
+def map_for_summing(numbers):
+    bank = 0
+    for number in numbers:
+        bank += number
+
+    return bank
 
 
-def trim(parameter, machine_count):
-    return [parameter]
+def trim_for_summing(parameter, machines_count):
+    return [parameter[i:i+(len(parameter)/machines_count)] for i in xrange(0, len(parameter),
+                                                                           len(parameter)/machines_count)]
 
 
 def main():
@@ -107,9 +123,14 @@ def main():
     server_socket.listen(2)
     (client_socket1, client_address1) = server_socket.accept()
     (client_socket2, client_address2) = server_socket.accept()
+    (client_socket3, client_address3) = server_socket.accept()
+    (client_socket4, client_address4) = server_socket.accept()
     print 'WE ARE GOOD'
-    manager = DCManager(reducee, mapp, trim, 10, [client_socket1, client_socket2], 1)
-    manager.run()
+    par = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    nodes = [client_socket1, client_socket2, client_socket3, client_socket4]
+    manager = DCManager(reduce_for_summing, map_for_summing, trim_for_summing, par, nodes, 3)
+    print "FINAL: " + str(manager.run())
+    server_socket.close()
 
 if __name__ == "__main__":
     main()

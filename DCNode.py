@@ -30,11 +30,12 @@ class DCNode(object):
 
         try:
             result = map_function(self.connector.parameters)
+            print "result form DCNode: " + str(result)
+            self.connector.send_result(True, result=result)
             self.connector.send_result(True, result=result)
             return result
 
         except Exception:
-            result = map_function(self.connector.parameters)
             self.connector.send_result(False)
             return None
 

@@ -83,7 +83,7 @@ class DCManager(object):
         for node in self.working_nodes.keys():
             self.working_nodes[node].info()
 
-        # Up to here works.
+        # Up to here, works.
 
         self.send_lil_missions()
 

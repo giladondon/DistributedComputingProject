@@ -38,7 +38,7 @@ class DCMProtocol(object):
         is_successful = marshal.loads(self.node.recv(HKB))
         if is_successful:
             result = marshal.loads(self.node.recv(HKB))
-            print str(result)
+            print "result from DCProtocol: " + str(result)
             return result
         return None
 

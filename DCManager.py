@@ -13,18 +13,17 @@ class DCManager(object):
     DCServer is a python implementation of a Distributed Computing Manager (Server).
     By using DCServer - managing a Distributed Computing Mechanism is made easier.
     """
-    def __init__(self, reduce_func, map_func, trim_func, parameters, nodes, machines_count):
+    def __init__(self, reduce_func, map_func, trim_func, parameters, nodes):
         """
         :param reduce_func: function that takes all nodes responses and makes one full answer
         :param map_func: function to work on every worker computer as distributed
         :param trim_func: function that explains how to trim parameters into little ranges - returns list
         :param parameters: parameters for server function to work on
         :param nodes: a list of available to read & write nodes
-        :param machines_count: count of machines to work on current job
         """
         self.response_stock = []
         self.reduce_func = reduce_func
-        self.lil_missions = trim_func(parameters, machines_count)
+        self.lil_missions = trim_func(parameters, len(nodes))
         self.map_func = map_func
         self.working_nodes = self.set_working_nodes(nodes)
 
@@ -60,8 +59,16 @@ class DCManager(object):
         """
         Gets responses from nodes
         """
-        for node in self.working_nodes.keys():
-            self.response_stock.append(self.working_nodes[node].get_result())
+        while len(self.response_stock) != len(self.lil_missions):
+            print "res: " + str(self.response_stock)
+            (read_list, write_list, error_list) = select.select(self.working_nodes.keys(),
+                                                                self.working_nodes.keys(), [])
+            for node in read_list:
+                print 'A'
+                self.response_stock.append(self.working_nodes[node].get_result())
+                print 'BCV'
+
+        print "res: " + str(self.response_stock)
 
     def reduce_nodes_answers(self):
         """
@@ -91,7 +98,7 @@ class DCManager(object):
 
         print "PRN 2: " + str(self.response_stock)
 
-        self.reduce_nodes_answers()
+        return self.reduce_nodes_answers()
 
 
 def reduce_for_summing(numbers):
@@ -112,8 +119,8 @@ def map_for_summing(numbers):
 
 
 def trim_for_summing(parameter, machines_count):
-    return [parameter[i:i+(len(parameter)/machines_count)] for i in xrange(0, len(parameter),
-                                                                           len(parameter)/machines_count)]
+    return [parameter[i:i+(len(parameter)/(machines_count-1))] for i in xrange(0, len(parameter),
+                                                                               len(parameter)/(machines_count-1))]
 
 
 def main():
@@ -128,7 +135,7 @@ def main():
     print 'WE ARE GOOD'
     par = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     nodes = [client_socket1, client_socket2, client_socket3, client_socket4]
-    manager = DCManager(reduce_for_summing, map_for_summing, trim_for_summing, par, nodes, 3)
+    manager = DCManager(reduce_for_summing, map_for_summing, trim_for_summing, par, nodes)
     print "FINAL: " + str(manager.run())
     server_socket.close()
 

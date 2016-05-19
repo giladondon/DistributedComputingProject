@@ -36,10 +36,13 @@ class DCMProtocol(object):
         :return result: results from node, if unsuccessful signal received - returns None
         """
         is_successful = marshal.loads(self.node.recv(HKB))
+        print 'F: ' + str(is_successful)
+        self.node.send(marshal.dumps(True))
         if is_successful:
             result = marshal.loads(self.node.recv(HKB))
-            print "result from DCProtocol: " + str(result)
+            print "R: " + str(result)
             return result
+
         return None
 
     def info(self):
@@ -66,6 +69,8 @@ class DCNProtocol(object):
         :param is_successful: True if task was successful
         """
         self.server.send(marshal.dumps(is_successful))
+        ack = marshal.loads(self.server.recv(HKB))
+        print 'ack: ' + str(ack)
         if result:
             self.server.send(marshal.dumps(result))
 

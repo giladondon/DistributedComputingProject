@@ -32,7 +32,6 @@ class DCNode(object):
             result = map_function(self.connector.parameters)
             print "result form DCNode: " + str(result)
             self.connector.send_result(True, result=result)
-            self.connector.send_result(True, result=result)
             return result
 
         except Exception:

@@ -24,6 +24,8 @@ class DCManager(object):
         self.response_stock = []
         self.reduce_func = reduce_func
         self.lil_missions = trim_func(parameters, len(nodes))
+        for lil_mission in self.lil_missions:
+            print 'mission: ' + str(lil_mission) + '\n'
         self.map_func = map_func
         self.working_nodes = self.set_working_nodes(nodes)
 
@@ -44,31 +46,34 @@ class DCManager(object):
         """
         index = 0
         for node in self.working_nodes.keys():
-            print str(self.lil_missions[index])
             self.working_nodes[node].parameters = self.lil_missions[index]
             index += 1
+
+        for node in self.working_nodes.keys():
+            print str(node) + ": " + str(self.working_nodes[node].parameters) + '\n'
 
     def send_lil_missions(self):
         """
         Sends all little missions to nodes
         """
-        for node in self.working_nodes.keys():
-            self.working_nodes[node].send_map_func()
+        while not self.all_sent():
+            print 'IN'
+            for node in self.working_nodes.keys():
+                time.sleep(2)
+                (read_list, write_list, error_list) = select.select([node],
+                                                                    [node], [])
+                for machine in write_list:
+                        self.working_nodes[machine].send_map_func()
 
     def get_responses(self):
         """
         Gets responses from nodes
         """
         while len(self.response_stock) != len(self.lil_missions):
-            print "res: " + str(self.response_stock)
             (read_list, write_list, error_list) = select.select(self.working_nodes.keys(),
                                                                 self.working_nodes.keys(), [])
             for node in read_list:
-                print 'A'
                 self.response_stock.append(self.working_nodes[node].get_result())
-                print 'BCV'
-
-        print "res: " + str(self.response_stock)
 
     def reduce_nodes_answers(self):
         """
@@ -81,22 +86,24 @@ class DCManager(object):
         except Exception:
             return None
 
+    def all_sent(self):
+        """
+        :return : True if all little missions were sent.
+        """
+        for node in self.working_nodes.keys():
+            if not self.working_nodes[node].is_sent:
+                return False
+        return True
+
     def run(self):
         """
         Runs distributed computing precision
         """
         self.assign_lil_missions()
 
-        for node in self.working_nodes.keys():
-            self.working_nodes[node].info()
-
-        # Up to here, works.
-
         self.send_lil_missions()
 
         self.get_responses()
-
-        print "PRN 2: " + str(self.response_stock)
 
         return self.reduce_nodes_answers()
 
@@ -104,7 +111,6 @@ class DCManager(object):
 def reduce_for_summing(numbers):
     bank = 0
     for answer in numbers:
-        print "TYPE: " + str(type(answer))
         bank += answer
 
     return bank
@@ -119,12 +125,17 @@ def map_for_summing(numbers):
 
 
 def trim_for_summing(parameter, machines_count):
-    return [parameter[i:i+(len(parameter)/(machines_count-1))] for i in xrange(0, len(parameter),
-                                                                               len(parameter)/(machines_count-1))]
+    size = len(parameter) / (machines_count-1)
+    loc = 0
+    sub = []
+    while loc+size < len(parameter):
+        sub.append(parameter[loc:size+loc])
+        loc += size
+    sub.append(parameter[loc:])
+    return sub
 
 
 def main():
-    print 'HEY'
     server_socket = socket.socket()
     server_socket.bind(('0.0.0.0', 9421))
     server_socket.listen(2)
@@ -133,7 +144,7 @@ def main():
     (client_socket3, client_address3) = server_socket.accept()
     (client_socket4, client_address4) = server_socket.accept()
     print 'WE ARE GOOD'
-    par = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    par = range(0, 400)
     nodes = [client_socket1, client_socket2, client_socket3, client_socket4]
     manager = DCManager(reduce_for_summing, map_for_summing, trim_for_summing, par, nodes)
     print "FINAL: " + str(manager.run())

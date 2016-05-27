@@ -1,6 +1,9 @@
 import marshal
+import pickle
 import types
 import socket
+import sys
+import select
 
 HKB = 512
 EMPTY = ""
@@ -22,13 +25,41 @@ class DCMProtocol(object):
         self.map_func = map_func
         self.parameters = parameters
         self.node = node
+        self.is_sent = False
+
+    def is_available_send(self):
+        """
+        Makes sure node gets data on the other side
+        """
+        (read_list, write_list, error_list) = select.select([], [self.node], [])
+        return self.node in write_list
 
     def send_map_func(self):
         """
         Sends map function to a node via protocol
         """
-        self.node.send(marshal.dumps(self.map_func.func_code))
-        self.node.send(marshal.dumps(self.parameters))
+        self.send_to_node(self.map_func.func_code)
+        print "SENT FUNCTION"
+        self.send_to_node(self.parameters)
+        print 'SENT PARAMETERS'
+        self.is_sent = True
+
+    def wait_till_available(self):
+        """
+        Waits for node to be available for sending
+        """
+        ready = self.is_available_send()
+        while not ready:
+            ready = self.is_available_send()
+
+    def send_to_node(self, data):
+        """
+        Manages every delivery of data to node, by first sending size
+        """
+        self.wait_till_available()
+        self.node.send(marshal.dumps(sys.getsizeof(data)))
+        self.wait_till_available()
+        self.node.send(marshal.dumps(data))
 
     def get_result(self):
         """
@@ -36,17 +67,12 @@ class DCMProtocol(object):
         :return result: results from node, if unsuccessful signal received - returns None
         """
         is_successful = marshal.loads(self.node.recv(HKB))
-        print 'F: ' + str(is_successful)
         self.node.send(marshal.dumps(True))
         if is_successful:
             result = marshal.loads(self.node.recv(HKB))
-            print "R: " + str(result)
             return result
 
         return None
-
-    def info(self):
-        print "Parameters: " + str(self.parameters)
 
 
 class DCNProtocol(object):
@@ -56,12 +82,20 @@ class DCNProtocol(object):
     """
     def __init__(self, manager):
         self.server = manager
-        self.raw_func = manager.recv(HKB)
+        self.raw_func = self.catch_from_server()
         if not self.is_server_down():
+            print 'NOT DOWN'
             self.map_func = types.FunctionType(marshal.loads(self.raw_func), globals())
-            self.parameters = marshal.loads(manager.recv(HKB))
+            print 'RECEIVED FUNCTION'
+            self.parameters = marshal.loads(self.catch_from_server())  # Problematic line
+            print 'Parameters: ' + str(self.parameters)
 
-            print "Parameters from DCNProtocol: " + str(self.parameters)
+    def catch_from_server(self):
+        """
+        Receive anything from server, by first getting size.
+        """
+        size = marshal.loads(self.server.recv(HKB))
+        return self.server.recv(size + 4*HKB)
 
     def send_result(self, is_successful, result=None):
         """
@@ -70,7 +104,6 @@ class DCNProtocol(object):
         """
         self.server.send(marshal.dumps(is_successful))
         ack = marshal.loads(self.server.recv(HKB))
-        print 'ack: ' + str(ack)
         if result:
             self.server.send(marshal.dumps(result))
 

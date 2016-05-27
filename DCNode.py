@@ -23,18 +23,18 @@ class DCNode(object):
         :return result: result of function, if unsuccessful returns None
         """
         if self.connector.is_server_down():
-            print "DOWN"
             return None
 
         map_function = self.connector.map_func
 
         try:
             result = map_function(self.connector.parameters)
-            print "result form DCNode: " + str(result)
+            print 'result: ' + str(result)
             self.connector.send_result(True, result=result)
             return result
 
         except Exception:
+            print 'Fucked up'
             self.connector.send_result(False)
             return None
 

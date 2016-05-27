@@ -32,5 +32,15 @@ def trim_for_summing(parameter, machines_count):
     """
     :param parameter: a list of anything
     """
-    return [parameter[i:i+(len(parameter)/(machines_count-1))] for i in xrange(0, len(parameter),
-                                                                               len(parameter)/(machines_count-1))]
+    size = len(parameter) / (machines_count-1)
+    loc = 0
+    sub = []
+    while loc+size < len(parameter):
+        sub.append(parameter[loc:size+loc])
+        loc += size
+    sub.append(parameter[loc:])
+    return sub
+
+if __name__ == '__main__':
+    for param in trim_for_summing(range(0, 400), 4):
+        print '*****' + str(param) + '******'

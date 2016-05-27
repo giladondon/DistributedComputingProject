@@ -59,7 +59,6 @@ class DCManager(object):
         while not self.all_sent():
             print 'IN'
             for node in self.working_nodes.keys():
-                time.sleep(2)
                 (read_list, write_list, error_list) = select.select([node],
                                                                     [node], [])
                 for machine in write_list:
@@ -144,7 +143,7 @@ def main():
     (client_socket3, client_address3) = server_socket.accept()
     (client_socket4, client_address4) = server_socket.accept()
     print 'WE ARE GOOD'
-    par = range(0, 400)
+    par = range(200, 300)
     nodes = [client_socket1, client_socket2, client_socket3, client_socket4]
     manager = DCManager(reduce_for_summing, map_for_summing, trim_for_summing, par, nodes)
     print "FINAL: " + str(manager.run())

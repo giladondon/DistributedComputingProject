@@ -8,6 +8,7 @@ import time
 
 HKB = 512
 EMPTY = ""
+ACK = 'ACK'
 
 __author__ = 'Gilad Barak'
 
@@ -61,6 +62,7 @@ class DCMProtocol(object):
         self.node.send(marshal.dumps(sys.getsizeof(data)))
         self.wait_till_available()
         self.node.send(marshal.dumps(data))
+        self.node.recv(HKB)
 
     def get_result(self):
         """
@@ -68,7 +70,7 @@ class DCMProtocol(object):
         :return result: results from node, if unsuccessful signal received - returns None
         """
         is_successful = marshal.loads(self.node.recv(HKB))
-        self.node.send(marshal.dumps(True))
+        self.node.send(ACK)
         if is_successful:
             result = marshal.loads(self.node.recv(HKB))
             return result
@@ -82,10 +84,15 @@ class DCNProtocol(object):
     DCCProtocol is working as a translator to "Socket's Language" for DCClient and DCServer.
     """
     def __init__(self, manager):
+        print 'Creating type \n'
         self.server = manager
         self.raw_func = self.catch_from_server()
+        self.server.send('ACK')
         if not self.is_server_down():
-            self.parameters = marshal.loads(self.catch_from_server())
+            parameters = self.catch_from_server()
+            self.server.send('ACK')
+            self.parameters = marshal.loads(parameters)
+            print 'Got Parameters'
             self.map_func = types.FunctionType(marshal.loads(self.raw_func), {})
 
     def catch_from_server(self):
@@ -93,6 +100,7 @@ class DCNProtocol(object):
         Receive anything from server, by first getting size.
         """
         size = self.server.recv(HKB)
+        print 'Got Size'
         if size == EMPTY:
             return EMPTY
         size = marshal.loads(size)

@@ -139,11 +139,14 @@ def main():
     server_socket.bind(('0.0.0.0', 9421))
     server_socket.listen(2)
     (client_socket1, client_address1) = server_socket.accept()
+    print 'GOT 1'
     (client_socket2, client_address2) = server_socket.accept()
+    print 'GOT 2'
     (client_socket3, client_address3) = server_socket.accept()
+    print 'GOT 3'
     (client_socket4, client_address4) = server_socket.accept()
     print 'WE ARE GOOD'
-    par = range(401)
+    par = range(1201)
     nodes = [client_socket1, client_socket2, client_socket3, client_socket4]
     manager = DCManager(reduce_for_summing, map_for_summing, trim_for_summing, par, nodes)
     print "FINAL: " + str(manager.run())

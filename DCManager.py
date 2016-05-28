@@ -146,7 +146,7 @@ def main():
     print 'GOT 3'
     (client_socket4, client_address4) = server_socket.accept()
     print 'WE ARE GOOD'
-    par = range(1201)
+    par = range(10)
     nodes = [client_socket1, client_socket2, client_socket3, client_socket4]
     manager = DCManager(reduce_for_summing, map_for_summing, trim_for_summing, par, nodes)
     print "FINAL: " + str(manager.run())

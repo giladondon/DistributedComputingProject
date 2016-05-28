@@ -112,8 +112,8 @@ class DCNProtocol(object):
         :param is_successful: True if task was successful
         """
         self.server.send(marshal.dumps(is_successful))
-        ack = marshal.loads(self.server.recv(HKB))
-        if result:
+        ack = self.server.recv(HKB)
+        if result and ack == ACK:
             self.server.send(marshal.dumps(result))
 
     def is_server_down(self):

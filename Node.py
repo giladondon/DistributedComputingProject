@@ -27,6 +27,7 @@ def main():
     When gets any, starts process and returns answers.
     """
     manager_socket = reconnect()
+    print 'Connected \n'
     while True:
         this_node = DCNode(manager_socket)
         results = this_node.work()

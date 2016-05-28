@@ -4,6 +4,7 @@ import types
 import socket
 import sys
 import select
+import time
 
 HKB = 512
 EMPTY = ""
@@ -84,18 +85,18 @@ class DCNProtocol(object):
         self.server = manager
         self.raw_func = self.catch_from_server()
         if not self.is_server_down():
-            print 'NOT DOWN'
-            self.map_func = types.FunctionType(marshal.loads(self.raw_func), globals())
-            print 'RECEIVED FUNCTION'
-            self.parameters = marshal.loads(self.catch_from_server())  # Problematic line
-            print 'Parameters: ' + str(self.parameters)
+            self.parameters = marshal.loads(self.catch_from_server())
+            self.map_func = types.FunctionType(marshal.loads(self.raw_func), {})
 
     def catch_from_server(self):
         """
         Receive anything from server, by first getting size.
         """
-        size = marshal.loads(self.server.recv(HKB))
-        return self.server.recv(size + 4*HKB)
+        size = self.server.recv(HKB)
+        if size == EMPTY:
+            return EMPTY
+        size = marshal.loads(size)
+        return self.server.recv(size + HKB)
 
     def send_result(self, is_successful, result=None):
         """

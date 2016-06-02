@@ -2,7 +2,7 @@ from DCNode import *
 
 __author__ = 'Gilad Barak'
 
-IP_MANAGER = '192.168.1.117'
+IP_MANAGER = '172.16.2.250'
 DCPORT = 9421
 
 

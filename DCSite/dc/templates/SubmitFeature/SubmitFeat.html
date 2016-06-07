@@ -13,7 +13,8 @@
 	<div id="form_container">
 	
 		<h1><a>Submit Process To Distributed Computing</a></h1>
-		<form id="form_1136539" class="appnitro"  method="post" action="">
+		<form id="form_1136539" class="appnitro"  method="post" action="/SubmitFeature/">
+			{% csrf_token %}
 					<div class="form_description">
 			<h2>Submit Process</h2>
 			<p>Using this file you can submit your process to the distributed computing mechanism. After submitting you will receive a process code in order to activate. </p>
@@ -21,25 +22,25 @@
 			<ul >
 			
 					<li id="li_4" >
-		<label class="description" for="element_4">Process Name </label>
+		<label class="description" for="ProcessName">Process Name </label>
 		<div>
-			<input id="element_4" name="element_4" class="element text small" type="text" maxlength="255" value=""/> 
+			<input id="ProcessName" name="ProcessName" class="element text small" type="text" maxlength="14ß" value=""/>
 		</div><p class="guidelines" id="guide_4"><small>Try keeping the name short and Simple.
 The name should generally hint on the process destiny.</small></p> 
 		</li>		<li id="li_1" >
-		<label class="description" for="element_1">Trim function </label>
+		<label class="description" for="TrimFunc">Trim function </label>
 		<div>
-			<textarea id="element_1" name="element_1" class="element textarea large">def trim_for(parameters, machine_count):&#13;&#10;    </textarea> 
+			<textarea id="TrimFunc" name="TrimFunc" class="element textarea large">def trim_for(parameters, machine_count):&#13;&#10;    </textarea> 
 		</div><p class="guidelines" id="guide_1"><small>The trim function will divide your global task into mini-tasks. Trim function receives the main parameter and the machine count you would like to work on. Make sure you keep the function definition as it is.</small></p> 
 		</li>		<li id="li_2" >
-		<label class="description" for="element_2">Map function </label>
+		<label class="description" for="MapFunc">Map function </label>
 		<div>
-			<textarea id="element_2" name="element_2" class="element textarea large">def map_for(parameter):&#13;&#10;    </textarea> 
+			<textarea id="MapFunc" name="MapFunc" class="element textarea large">def map_for(parameter):&#13;&#10;    </textarea> 
 		</div><p class="guidelines" id="guide_2"><small>The map function runs on each of the distributed computing nodes. In other words these are the little tasks. Make sure you keep the function definition as it is.</small></p> 
 		</li>		<li id="li_3" >
-		<label class="description" for="element_3">Reduce Function </label>
+		<label class="description" for="ReduceFunc">Reduce Function </label>
 		<div>
-			<textarea id="element_3" name="element_3" class="element textarea large">def reduce_for(answers):&#13;&#10;    </textarea> 
+			<textarea id="ReduceFunc" name="ReduceFunc" class="element textarea large">def reduce_for(answers):&#13;&#10;    </textarea> 
 		</div><p class="guidelines" id="guide_3"><small>The reduce function is the arrangement of answers function. this function receives answers from all nodes and work them into one final answer. Make sure you keep the function definition as it is.</small></p>
 		</li>
 			

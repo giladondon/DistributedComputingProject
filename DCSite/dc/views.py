@@ -1,28 +1,36 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from .forms import submit_feature
+from django.shortcuts import render, render_to_response
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from .forms import submit_dc, run_dc
 import os
 
 
-def submit_feature_response(request):
-	return HttpResponse("Hello world you are submitting a feature")
-
-
-def access_feature_response(request):
-	return HttpResponse("Hello world you are accessing a feature")
-
-
-def get_feature(request):
+def get_run(request):
 	if request.method == 'POST':
-		form = submit_feature(request.POST)
+		form = run_dc(request.POST)
+		if form.is_valid():
+			process_code = form.cleaned_data['process_code']
+			parameter = form.cleaned_data['parameter']
+			machines_count = form.cleaned_data['machines_count']
+			return HttpResponseRedirect('/dc/submitDC')
+
+	directory = os.sep.join(['templates', 'RunDC', 'RunDC.html'])
+	return render(request, os.path.dirname(os.path.realpath(__file__))+os.sep+directory)
+
+
+def get_process(request):
+	if request.method == 'POST':
+		form = submit_dc(request.POST)
 		if form.is_valid():
 			process_name = form.cleaned_data['process_name']
 			trim_func = form.cleaned_data['trim_func']
 			map_func = form.cleaned_data['map_func']
 			reduce_func = form.cleaned_data['reduce_func']
-			return HttpResponseRedirect('/thanks/')
+			return HttpResponseRedirect('/dc/runDC')
 
-	else:
-		form = submit_feature()
+	directory = os.sep.join(['templates', 'SubmitDC', 'SubmitDC.html'])
+	return render(request, os.path.dirname(os.path.realpath(__file__))+os.sep+directory)
 
-	return render(request, os.path.dirname(os.path.realpath(__file__)) + os.sep + os.sep.join(['templates', 'SubmitFeature', 'SubmitFeat.html']))
+
+def not_found(request):
+	directory = os.sep.join(['templates', 'pageNotFound.html'])
+	return render(request, os.path.dirname(os.path.realpath(__file__))+os.sep+directory)

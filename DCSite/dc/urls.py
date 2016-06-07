@@ -1,7 +1,8 @@
-from django.conf.urls import url
+from django.conf.urls import url, patterns
 from . import views
 
 urlpatterns = [
-	url(r'^submitFeature$', views.get_feature, name='submitFeature'),
-	url(r'^accessFeature$', views.access_feature_response, name='accessFeature')
+	url(r'^submitDC$', views.get_process, name='submit Distributed Computing'),
+	url(r'^runDC$', views.get_run, name='Access Distributed Computing'),
+	url(r'^', views.not_found, name="Page Not Found")
 ]

@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load staticfiles %}
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Run Distributed Computing Process</title>
+<link rel="stylesheet" type="text/css" href="{% static 'Run/view.css' %}" media="all">
+<script type="text/javascript" src="{% static 'Run/view.js' %}"></script>
+
+</head>
+<body id="main_body" >
+	
+	<img id="top" src="{% static 'Run/top.png' %}" alt="">
+	<div id="form_container">
+	
+		<h1><a>Run Distributed Computing Process</a></h1>
+		<form id="form_1136905" class="appnitro"  method="post" action="/dc/runDC">
+			{% csrf_token %}
+			{{ form }}
+					<div class="form_description">
+			<h2>Run Distributed Computing Process</h2>
+			<p>After Submitting </p>
+		</div>						
+			<ul >
+			
+					<li id="li_4" >
+		<label class="description" for="process_code">Process Code </label>
+		<div>
+			<input id="process_code" name="process_code" class="element text small" type="text" maxlength="255" value=""/> 
+		</div><p class="guidelines" id="guide_4"><small>Enter wished process code in order to activate</small></p> 
+		</li>		<li id="li_6" >
+		<label class="description" for="parameter">Parameter </label>
+		<div>
+			<textarea id="parameter" name="parameter" class="element textarea small">def parameter():&#13;&#10;    </textarea>
+		</div><p class="guidelines" id="guide_6"><small>Function must return a single parameter for your process to work on. Make sure you don't change the function's definistion.</small></p> 
+		</li>		<li id="li_5" >
+		<label class="description" for="machines_count">Machines count </label>
+		<div>
+			<input id="machines_count" name="machines_count" class="element text small" type="text" maxlength="255" value=""/> 
+		</div><p class="guidelines" id="guide_5"><small>How many machines would you like to work on current run?</small></p> 
+		</li>		<li id="li_1" >
+			
+					<li class="buttons">
+			    <input type="hidden" name="form_id" value="1136905" />
+			    
+				<input id="saveForm" class="button_text" type="submit" name="submit" value="Work" />
+		</li>
+			</ul>
+		</form>	
+	</div>
+	<img id="bottom" src="{% static 'Run/bottom.png' %}" alt="">
+	</body>
+</html>

@@ -11,9 +11,17 @@
 <body id="main_body" >
 	
 	<img id="top" src="{% static 'Run/top.png' %}" alt="">
-	<div style="height: 100px;" id="form_container" class="form_description">
+	<div style="height: 200px;" id="form_container" class="form_description">
 		<h1><a>Run Distributed Computing Process</a></h1>
-		<h2 align='center'>404 - Page Not Found</h2>
+		<br>
+		<h2 align='center'>The result of {{ process_name }} is: {{ result }}</h2>
+		<br>
+		<div style="text-align:center">
+			<a href='runDC'>Run existing process using a process code</a>
+			<br>
+			<br>
+			<a href='submitDC'>Submit a new Distributed Computing process</a>
+		</div>
 	</div>
 	<img id="bottom" src="{% static 'Run/bottom.png' %}" alt="">
 	</body>

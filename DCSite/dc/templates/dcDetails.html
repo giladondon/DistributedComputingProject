@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Page Not Found</title>
+<title>Distributed Computing Process Details</title>
 <link rel="stylesheet" type="text/css" href="{% static 'Run/view.css' %}" media="all">
 <script type="text/javascript" src="{% static 'Run/view.js' %}"></script>
 
@@ -11,9 +11,16 @@
 <body id="main_body" >
 	
 	<img id="top" src="{% static 'Run/top.png' %}" alt="">
-	<div style="height: 100px;" id="form_container" class="form_description">
+	<div style="height: 200px;" id="form_container" class="form_description">
 		<h1><a>Run Distributed Computing Process</a></h1>
-		<h2 align='center'>404 - Page Not Found</h2>
+		<br>
+		<h2 align='center'>Distributed Computing - {{ process_name }}</h2>
+		<br>
+		<p>Please write down the following process code:</p>
+		<h3 align='center'>{{ process_code }}</h3>
+		<div style="text-align:center">
+			<a href='runDC'>Run Process NOW</a>
+		</div>
 	</div>
 	<img id="bottom" src="{% static 'Run/bottom.png' %}" alt="">
 	</body>

@@ -9,6 +9,6 @@ class submit_dc(forms.Form):
 
 
 class run_dc(forms.Form):
-	process_code = forms.CharField(max_length=12)
+	process_code = forms.CharField(max_length=32)
 	parameter = forms.CharField(widget=forms.Textarea)
 	machines_count = forms.CharField(max_length=2)

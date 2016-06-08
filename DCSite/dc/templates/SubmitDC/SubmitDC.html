@@ -13,7 +13,7 @@
 	<img id="top" src="{% static 'Submit/top.png' %}" alt="">
 	<div id="form_container">
 	
-		<h1><a>Submit Distributed Computing Process</a></h1>
+		<h1><a href='/dc/'>Submit Distributed Computing Process</a></h1>
 		<form id="form_1136539" class="appnitro"  method="post" action="/dc/submitDC">
 			{% csrf_token %}
 			{{ form }}

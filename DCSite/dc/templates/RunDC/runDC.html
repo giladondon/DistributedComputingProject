@@ -13,20 +13,21 @@
 	<img id="top" src="{% static 'Run/top.png' %}" alt="">
 	<div id="form_container">
 	
-		<h1><a>Run Distributed Computing Process</a></h1>
+		<h1><a href='/dc/'>Run Distributed Computing Process</a></h1>
 		<form id="form_1136905" class="appnitro"  method="post" action="/dc/runDC">
 			{% csrf_token %}
 			{{ form }}
 					<div class="form_description">
 			<h2>Run Distributed Computing Process</h2>
-			<p>After Submitting </p>
+			<p>After Submitting your Distributed Computing process you'll always be able to access here using your process code. 
+				Before running your process you must fill in the following form:</p>
 		</div>						
 			<ul >
 			
 					<li id="li_4" >
 		<label class="description" for="process_code">Process Code </label>
 		<div>
-			<input id="process_code" name="process_code" class="element text small" type="text" maxlength="255" value=""/> 
+			<input id="process_code" name="process_code" class="element text large" type="text" maxlength="255" value=""/> 
 		</div><p class="guidelines" id="guide_4"><small>Enter wished process code in order to activate</small></p> 
 		</li>		<li id="li_6" >
 		<label class="description" for="parameter">Parameter </label>
